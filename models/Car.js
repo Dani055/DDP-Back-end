@@ -22,13 +22,9 @@ const carSchema = new Schema({
   },
   status:{
     type: Schema.Types.String,
-    default: 'Недоставена',
+    default: 'недоставена',
     required: true
   },
-  isDone:{
-    type: Schema.Types.Boolean,
-    default: false
-  }
 });
 
 module.exports = mongoose.model('Car', carSchema);

@@ -3,7 +3,7 @@ const User = require('../models/User');
 module.exports = {
   getCars: async (req, res, next) => {
     try {
-      let cars = await Car.find({ isDone: false })
+      let cars = await Car.find({status: {$ne: 'завършена & взета'}}).populate('user')
       res.status(200)
         .json({ message: 'Fetched cars successfully.', cars });
     }
@@ -16,7 +16,7 @@ module.exports = {
   },
   getDoneCars: async (req, res, next) => {
     try {
-      let cars = await Car.find({ isDone: true })
+      let cars = await Car.find({ status: {$in: ['завършена & взета']} }).sort({_id: -1}).limit(10).populate('user')
       res.status(200)
         .json({ message: 'Fetched cars successfully.', cars });
     }
@@ -29,7 +29,7 @@ module.exports = {
   },
   getMyCars: async (req, res, next) => {
     try {
-      let cars = await Car.find({ user: req.userId })
+      let cars = await Car.find({ user: req.userId }).sort({_id: -1}).populate('user')
       res.status(200)
         .json({ message: 'Fetched cars successfully.', cars });
     }
@@ -117,14 +117,14 @@ module.exports = {
   editCar: async (req, res, next) => {
     try {
       const carId = req.params.carId;
-      let { brand, description, price, status, isDone } = req.body;
+      let { brand, description, price, status} = req.body;
       let car = await Car.findById(carId)
       if (car) {
         car.brand = brand;
         car.description = description;
         car.price = price;
         car.status = status;
-        car.isDone = isDone;
+
         await car.save()
         res.status(200)
           .json({
