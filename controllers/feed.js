@@ -3,33 +3,21 @@ const User = require('../models/User');
 module.exports = {
   getCars: async (req, res, next) => {
     try {
-      let cars = await Car.find({status: {$ne: 'завършена & взета'}}).populate('user')
-      res.status(200)
-        .json({ message: 'Fetched cars successfully.', cars });
-    }
-    catch (error) {
-      if (!error.statusCode) {
-        error.statusCode = 500;
+      let filter = req.query.filter;
+      let page;
+      let multiple;
+      let cars = [];
+
+      if(filter === 'all' || !filter){
+        cars = await Car.find({status: {$ne: 'завършена & взета'}}).populate('user')
       }
-      next(error);
-    }
-  },
-  getDoneCars: async (req, res, next) => {
-    try {
-      let cars = await Car.find({ status: {$in: ['завършена & взета']} }).sort({_id: -1}).limit(10).populate('user')
-      res.status(200)
-        .json({ message: 'Fetched cars successfully.', cars });
-    }
-    catch (error) {
-      if (!error.statusCode) {
-        error.statusCode = 500;
+      else if(filter === 'done'){
+        cars = await Car.find({ status: {$in: ['завършена & взета']} }).sort({_id: -1}).limit(10).populate('user')
       }
-      next(error);
-    }
-  },
-  getMyCars: async (req, res, next) => {
-    try {
-      let cars = await Car.find({ user: req.userId }).sort({_id: -1}).populate('user')
+      else if(filter === 'mine'){
+        cars = await Car.find({ user: req.userId }).sort({_id: -1}).populate('user')
+      }
+      
       res.status(200)
         .json({ message: 'Fetched cars successfully.', cars });
     }

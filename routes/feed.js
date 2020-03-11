@@ -5,8 +5,6 @@ const isMechanic = require('../middleware/is-mechanic');
 
 
 router.get('/cars',isAuth, feedController.getCars);
-router.get('/cars/done',isAuth,isMechanic, feedController.getDoneCars);
-router.get('/cars/user',isAuth, feedController.getMyCars);
 router.post('/cars/create',isAuth, feedController.createCar);
 router.get('/cars/details/:carId',isAuth, feedController.getCarById);
 router.get('/cars/edit/:carId',isAuth,isMechanic, feedController.getCarByIdAdmin);
